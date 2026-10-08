@@ -1,1 +1,291 @@
+--[[
+    Script: VOID HUB - Fixed Raw GitHub & Real Device Spoofer
+    Game ID: 11379739543
+]]--
 
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local SoundService = game:GetService("SoundService")
+local TeleportService = game:GetService("TeleportService")
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+local GuiService = game:GetService("GuiService")
+local LocalPlayer = Players.LocalPlayer
+
+-- تصحيح الرابط إلى الرابط الخام المباشر لضمان عمل التنفيذ التلقائي بعد الريجوين في دلتا
+pcall(function()
+    if queue_on_teleport then
+        queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ddome9371-art/Ez-/refs/heads/main/VOID-OP-HUB-HOB"))()')
+    end
+end)
+
+-- تطبيق وتثبيت الجهاز الحقيقي فوراً بعد عودة اللاعب
+local savedDevice = pcall(function() return getgenv().VoidActiveDevice end) and getgenv().VoidActiveDevice or nil
+
+local function applyRealDevice(deviceName)
+    pcall(function()
+        if deviceName == "PC" then
+            UserInputService.TouchEnabled = false
+            UserInputService.MouseEnabled = true
+            GuiService:SetEmulateGamepad(false)
+        elseif deviceName == "Mobile" then
+            UserInputService.TouchEnabled = true
+            UserInputService.MouseEnabled = false
+            GuiService:SetEmulateGamepad(false)
+        elseif deviceName == "Console" then
+            UserInputService.TouchEnabled = false
+            GuiService:SetEmulateGamepad(true)
+        end
+    end)
+end
+
+if savedDevice then
+    applyRealDevice(savedDevice)
+end
+
+local mainGui = Instance.new("ScreenGui")
+mainGui.Name = "VoidUltimateSpoofer"
+mainGui.ResetOnSpawn = false
+pcall(function() mainGui.Parent = CoreGui end)
+if not mainGui.Parent then mainGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+local BG_IMAGE_ID = "rbxassetid://121235183659027"
+
+local function playClickSound()
+    pcall(function()
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://6042457223"
+        sound.Volume = 0.6
+        sound.Parent = SoundService
+        sound:Play()
+        task.delay(1, function() sound:Destroy() end)
+    end)
+end
+
+local function addCardBackground(parent)
+    local bg = Instance.new("ImageLabel")
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundTransparency = 1
+    bg.Image = BG_IMAGE_ID
+    bg.ScaleType = Enum.ScaleType.Slice
+    bg.SliceCenter = Rect.new(100, 100, 100, 100)
+    bg.ZIndex = math.max(1, parent.ZIndex - 1)
+    bg.Parent = parent
+
+    local corner = Instance.new("UICorner")
+    local parentCorner = parent:FindFirstChildOfClass("UICorner")
+    corner.CornerRadius = parentCorner and parentCorner.CornerRadius or UDim.new(0, 14)
+    corner.Parent = bg
+    return bg
+end
+
+local function addUIGradient(parent, rotation)
+    local grad = Instance.new("UIGradient")
+    grad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(160, 90, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(220, 100, 200)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 180, 255))
+    })
+    grad.Rotation = rotation or 45
+    grad.Parent = parent
+    return grad
+end
+
+-- علامة الشفت لوك في منتصف الشاشة
+local function showCenterShiftLockIcon()
+    if CoreGui:FindFirstChild("VoidCenterShiftLock") then return end
+    
+    local lockGui = Instance.new("ScreenGui")
+    lockGui.Name = "VoidCenterShiftLock"
+    lockGui.ResetOnSpawn = false
+    pcall(function() lockGui.Parent = CoreGui end)
+    if not lockGui.Parent then lockGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+    local outerCircle = Instance.new("Frame")
+    outerCircle.Size = UDim2.new(0, 36, 0, 36)
+    outerCircle.Position = UDim2.new(0.5, -18, 0.5, -18)
+    outerCircle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    outerCircle.BackgroundTransparency = 0.4
+    outerCircle.ZIndex = 999
+    outerCircle.Parent = lockGui
+
+    local outCorner = Instance.new("UICorner")
+    outCorner.CornerRadius = UDim.new(1, 0)
+    outCorner.Parent = outerCircle
+
+    local outStroke = Instance.new("UIStroke")
+    outStroke.Color = Color3.fromRGB(255, 255, 255)
+    outStroke.Thickness = 2
+    outStroke.Parent = outerCircle
+
+    local innerDot = Instance.new("Frame")
+    innerDot.Size = UDim2.new(0, 10, 0, 10)
+    innerDot.Position = UDim2.new(0.5, -5, 0.5, -5)
+    innerDot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    innerDot.ZIndex = 1000
+    innerDot.Parent = outerCircle
+
+    local inCorner = Instance.new("UICorner")
+    inCorner.CornerRadius = UDim.new(1, 0)
+    inCorner.Parent = innerDot
+end
+
+if savedDevice then
+    showCenterShiftLockIcon()
+end
+
+local function showToast(message)
+    local toast = Instance.new("TextLabel")
+    toast.Size = UDim2.new(0, 280, 0, 50)
+    toast.Position = UDim2.new(1, -295, 1, -80)
+    toast.BackgroundColor3 = Color3.fromRGB(20, 15, 30)
+    toast.BackgroundTransparency = 0.1
+    toast.Text = "⚡ " .. message
+    toast.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toast.TextSize = 14
+    toast.Font = Enum.Font.GothamBold
+    toast.ZIndex = 200
+    toast.Parent = mainGui
+
+    addCardBackground(toast)
+    addUIGradient(toast)
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = toast
+
+    task.delay(3, function()
+        if toast and toast.Parent then toast:Destroy() end
+    end)
+end
+
+local function openDeviceSpooferMenu()
+    local menuFrame = Instance.new("Frame")
+    menuFrame.Size = UDim2.new(0, 480, 0, 260)
+    menuFrame.Position = UDim2.new(0.5, -240, 0.4, -130)
+    menuFrame.BackgroundColor3 = Color3.fromRGB(12, 10, 20)
+    menuFrame.BackgroundTransparency = 0.1
+    menuFrame.BorderSizePixel = 0
+    menuFrame.Active = true
+    menuFrame.Draggable = true
+    menuFrame.Parent = mainGui
+
+    addCardBackground(menuFrame)
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 22)
+    corner.Parent = menuFrame
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 255, 255)
+    stroke.Thickness = 2
+    stroke.Parent = menuFrame
+    addUIGradient(stroke)
+
+    -- العنوان يظهر الحالة Active تلقائياً بعد الريجوين للجهاز المحفوظ
+    local statusText = getgenv().VoidActiveDevice and ("Active: " .. getgenv().VoidActiveDevice) or "Select Device"
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 45)
+    title.Position = UDim2.new(0, 0, 0, 5)
+    title.BackgroundTransparency = 1
+    title.Text = "💻 Spoofer Status [" .. statusText .. "] ⚡"
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.TextSize = 14
+    title.Font = Enum.Font.GothamBold
+    title.Parent = menuFrame
+
+    local selectedChoice = getgenv().VoidActiveDevice or "PC"
+
+    local function createDeviceCard(xPos, deviceName, iconText)
+        local card = Instance.new("Frame")
+        card.Size = UDim2.new(0, 142, 0, 110)
+        card.Position = UDim2.new(0, xPos, 0, 55)
+        card.BackgroundColor3 = Color3.fromRGB(18, 15, 30)
+        card.BackgroundTransparency = 0.15
+        card.BorderSizePixel = 0
+        card.Parent = menuFrame
+
+        addCardBackground(card)
+
+        local cardCorner = Instance.new("UICorner")
+        cardCorner.CornerRadius = UDim.new(0, 14)
+        cardCorner.Parent = card
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, 0, 0, 50)
+        label.Position = UDim2.new(0, 0, 0, 8)
+        label.BackgroundTransparency = 1
+        label.Text = iconText .. "\n" .. deviceName
+        label.TextColor3 = Color3.fromRGB(240, 240, 255)
+        label.TextSize = 13
+        label.Font = Enum.Font.GothamBold
+        label.Parent = card
+
+        local selectBtn = Instance.new("TextButton")
+        selectBtn.Size = UDim2.new(0.85, 0, 0, 35)
+        selectBtn.Position = UDim2.new(0.075, 0, 0, 65)
+        selectBtn.BackgroundColor3 = Color3.fromRGB(40, 20, 70)
+        selectBtn.BackgroundTransparency = 0.0
+        selectBtn.Text = "اختيار"
+        selectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        selectBtn.TextSize = 12
+        selectBtn.Font = Enum.Font.GothamBold
+        selectBtn.Parent = card
+
+        addCardBackground(selectBtn)
+        addUIGradient(selectBtn)
+
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 10)
+        btnCorner.Parent = selectBtn
+
+        selectBtn.MouseButton1Click:Connect(function()
+            selectedChoice = deviceName
+            playClickSound()
+            showToast("تم اختيار: " .. deviceName)
+            title.Text = "💻 Spoofer Status [Selected: " .. deviceName .. "] ⚡"
+        end)
+    end
+
+    createDeviceCard(15,  "PC",      "🖥️")
+    createDeviceCard(169, "Mobile",  "📱")
+    createDeviceCard(323, "Console", "🎮")
+
+    local applyBtn = Instance.new("TextButton")
+    applyBtn.Size = UDim2.new(0.92, 0, 0, 42)
+    applyBtn.Position = UDim2.new(0.04, 0, 0, 195)
+    applyBtn.BackgroundColor3 = Color3.fromRGB(30, 180, 90)
+    applyBtn.BackgroundTransparency = 0.0
+    applyBtn.Text = "تطبيق حقيقي + Active + Rejoin ⚡"
+    applyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    applyBtn.TextSize = 13
+    applyBtn.Font = Enum.Font.GothamBold
+    applyBtn.Parent = menuFrame
+
+    addCardBackground(applyBtn)
+    addUIGradient(applyBtn)
+
+    local applyCorner = Instance.new("UICorner")
+    applyCorner.CornerRadius = UDim.new(0, 12)
+    applyCorner.Parent = applyBtn
+
+    applyBtn.MouseButton1Click:Connect(function()
+        playClickSound()
+        
+        -- حفظ الجهاز نهائياً لكي يظهر Active بعد الريجوين
+        getgenv().VoidActiveDevice = selectedChoice
+        
+        applyRealDevice(selectedChoice)
+        showCenterShiftLockIcon()
+        showToast("جاري حفظ الجهاز وتفعيل الحالة والريجوين...")
+        
+        menuFrame:Destroy()
+        
+        task.wait(0.5)
+        pcall(function()
+            TeleportService:Teleport(game.PlaceId, LocalPlayer)
+        end)
+    end)
+end
+
+openDeviceSpooferMenu()
