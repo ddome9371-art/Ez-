@@ -6,6 +6,8 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 local Terrain = workspace:FindFirstChildOfClass("Terrain")
 local UserSettings = UserSettings()
 local GameSettings = UserSettings:GetService("UserGameSettings")
@@ -55,6 +57,181 @@ end
 
 local CurrentThemeColor = Color3.fromRGB(220, 30, 30)
 
+-- ==================== [ مرحلة 1: اختيار الجهاز أولاً ] ====================
+local DeviceSelectionFrame = Instance.new("Frame")
+DeviceSelectionFrame.Parent = ScreenGui
+DeviceSelectionFrame.BackgroundColor3 = Color3.fromRGB(10, 8, 8)
+DeviceSelectionFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+DeviceSelectionFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+DeviceSelectionFrame.Size = UDim2.new(0, 420, 0, 220)
+Instance.new("UICorner", DeviceSelectionFrame).CornerRadius = UDim.new(0, 14)
+local DSStroke = Instance.new("UIStroke", DeviceSelectionFrame)
+DSStroke.Color = CurrentThemeColor
+DSStroke.Thickness = 2
+
+local DSTitle = Instance.new("TextLabel")
+DSTitle.Parent = DeviceSelectionFrame
+DSTitle.BackgroundTransparency = 1
+DSTitle.Position = UDim2.new(0, 0, 0, 20)
+DSTitle.Size = UDim2.new(1, 0, 0, 30)
+DSTitle.Font = Enum.Font.GothamBold
+DSTitle.Text = "💻 اختر جهازك لتعديل حجم السكربت تلقائياً 📱"
+DSTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+DSTitle.TextSize = 13
+
+local DSBtnHolder = Instance.new("Frame")
+DSBtnHolder.Parent = DeviceSelectionFrame
+DSBtnHolder.BackgroundTransparency = 1
+DSBtnHolder.Position = UDim2.new(0, 20, 0, 75)
+DSBtnHolder.Size = UDim2.new(1, -40, 0, 50)
+local DSLayout = Instance.new("UIListLayout", DSBtnHolder)
+DSLayout.FillDirection = Enum.FillDirection.Horizontal
+DSLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+DSLayout.Padding = UDim.new(0, 15)
+
+local function createDeviceBtn(name, text)
+    local btn = Instance.new("TextButton")
+    btn.Parent = DSBtnHolder
+    btn.BackgroundColor3 = Color3.fromRGB(30, 20, 20)
+    btn.Size = UDim2.new(0, 115, 0, 45)
+    btn.Font = Enum.Font.GothamBold
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 12
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    return btn
+end
+
+local PCBtn = createDeviceBtn("PC", "💻 بيسي (PC)")
+local TabletBtn = createDeviceBtn("Tablet", "📱 تابلت")
+local MobileBtn = createDeviceBtn("Mobile", "📲 جوال")
+
+-- ==================== [ مرحلة 2: اختيار اللغة الأولية ] ====================
+local LangSelectionFrame = Instance.new("Frame")
+LangSelectionFrame.Parent = ScreenGui
+LangSelectionFrame.BackgroundColor3 = Color3.fromRGB(10, 8, 8)
+LangSelectionFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+LangSelectionFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+LangSelectionFrame.Size = UDim2.new(0, 380, 0, 180)
+LangSelectionFrame.Visible = false
+Instance.new("UICorner", LangSelectionFrame).CornerRadius = UDim.new(0, 14)
+local LSStroke = Instance.new("UIStroke", LangSelectionFrame)
+LSStroke.Color = CurrentThemeColor
+LSStroke.Thickness = 2
+
+local LSTitle = Instance.new("TextLabel")
+LSTitle.Parent = LangSelectionFrame
+LSTitle.BackgroundTransparency = 1
+LSTitle.Position = UDim2.new(0, 0, 0, 20)
+LSTitle.Size = UDim2.new(1, 0, 0, 30)
+LSTitle.Font = Enum.Font.GothamBold
+LSTitle.Text = "🌐 اختر لغة الواجهة المفضلة لديك 🌐"
+LSTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+LSTitle.TextSize = 13
+
+local LSBtnHolder = Instance.new("Frame")
+LSBtnHolder.Parent = LangSelectionFrame
+LSBtnHolder.BackgroundTransparency = 1
+LSBtnHolder.Position = UDim2.new(0, 20, 0, 75)
+LSBtnHolder.Size = UDim2.new(1, -40, 0, 50)
+local LSLayout = Instance.new("UIListLayout", LSBtnHolder)
+LSLayout.FillDirection = Enum.FillDirection.Horizontal
+LSLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+LSLayout.Padding = UDim.new(0, 20)
+
+local ArabicBtn = Instance.new("TextButton")
+ArabicBtn.Parent = LSBtnHolder
+ArabicBtn.BackgroundColor3 = Color3.fromRGB(30, 20, 20)
+ArabicBtn.Size = UDim2.new(0, 150, 0, 45)
+ArabicBtn.Font = Enum.Font.GothamBold
+ArabicBtn.Text = "🇸🇦 عربي"
+ArabicBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ArabicBtn.TextSize = 13
+Instance.new("UICorner", ArabicBtn).CornerRadius = UDim.new(0, 8)
+
+local EnglishBtn = Instance.new("TextButton")
+EnglishBtn.Parent = LSBtnHolder
+EnglishBtn.BackgroundColor3 = Color3.fromRGB(30, 20, 20)
+EnglishBtn.Size = UDim2.new(0, 150, 0, 45)
+EnglishBtn.Font = Enum.Font.GothamBold
+EnglishBtn.Text = "🇬🇧 English"
+EnglishBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+EnglishBtn.TextSize = 13
+Instance.new("UICorner", EnglishBtn).CornerRadius = UDim.new(0, 8)
+
+local selectedWidth, selectedHeight = 700, 420
+local currentLang = "AR"
+
+PCBtn.MouseButton1Click:Connect(function()
+    selectedWidth, selectedHeight = 780, 460
+    DeviceSelectionFrame.Visible = false
+    LangSelectionFrame.Visible = true
+end)
+
+TabletBtn.MouseButton1Click:Connect(function()
+    selectedWidth, selectedHeight = 620, 380
+    DeviceSelectionFrame.Visible = false
+    LangSelectionFrame.Visible = true
+end)
+
+MobileBtn.MouseButton1Click:Connect(function()
+    selectedWidth, selectedHeight = 520, 320
+    DeviceSelectionFrame.Visible = false
+    LangSelectionFrame.Visible = true
+end)
+
+-- ==================== [ نافذة تغيير اللغة الداخلية المודיة ] ====================
+local InternalLangPopup = Instance.new("Frame")
+InternalLangPopup.Parent = ScreenGui
+InternalLangPopup.BackgroundColor3 = Color3.fromRGB(12, 10, 10)
+InternalLangPopup.AnchorPoint = Vector2.new(0.5, 0.5)
+InternalLangPopup.Position = UDim2.new(0.5, 0, 0.5, 0)
+InternalLangPopup.Size = UDim2.new(0, 320, 0, 160)
+InternalLangPopup.Visible = false
+InternalLangPopup.ZIndex = 10
+Instance.new("UICorner", InternalLangPopup).CornerRadius = UDim.new(0, 12)
+local ILPStroke = Instance.new("UIStroke", InternalLangPopup)
+ILPStroke.Color = CurrentThemeColor
+ILPStroke.Thickness = 2
+
+local ILPTitle = Instance.new("TextLabel", InternalLangPopup)
+ILPTitle.BackgroundTransparency = 1
+ILPTitle.Position = UDim2.new(0, 0, 0, 15)
+ILPTitle.Size = UDim2.new(1, 0, 0, 30)
+ILPTitle.Font = Enum.Font.GothamBold
+ILPTitle.Text = "اختر اللغة / Select Language"
+ILPTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+ILPTitle.TextSize = 12
+
+local ILPBtnAR = Instance.new("TextButton", InternalLangPopup)
+ILPBtnAR.BackgroundColor3 = Color3.fromRGB(30, 20, 20)
+ILPBtnAR.Position = UDim2.new(0, 20, 0, 60)
+ILPBtnAR.Size = UDim2.new(0, 130, 0, 40)
+ILPBtnAR.Font = Enum.Font.GothamBold
+ILPBtnAR.Text = "🇸🇦 العربية"
+ILPBtnAR.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", ILPBtnAR).CornerRadius = UDim.new(0, 8)
+
+local ILPBtnEN = Instance.new("TextButton", InternalLangPopup)
+ILPBtnEN.BackgroundColor3 = Color3.fromRGB(30, 20, 20)
+ILPBtnEN.Position = UDim2.new(0, 170, 0, 60)
+ILPBtnEN.Size = UDim2.new(0, 130, 0, 40)
+ILPBtnEN.Font = Enum.Font.GothamBold
+ILPBtnEN.Text = "🇬🇧 English"
+ILPBtnEN.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", ILPBtnEN).CornerRadius = UDim.new(0, 8)
+
+local ILPCloseBtn = Instance.new("TextButton", InternalLangPopup)
+ILPCloseBtn.BackgroundColor3 = Color3.fromRGB(150, 20, 20)
+ILPCloseBtn.Position = UDim2.new(0, 110, 0, 115)
+ILPCloseBtn.Size = UDim2.new(0, 100, 0, 30)
+ILPCloseBtn.Font = Enum.Font.GothamBold
+ILPCloseBtn.Text = "إغلاق / Close"
+ILPCloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ILPCloseBtn.TextSize = 10
+Instance.new("UICorner", ILPCloseBtn).CornerRadius = UDim.new(0, 6)
+ILPCloseBtn.MouseButton1Click:Connect(function() InternalLangPopup.Visible = false end)
+
 -- ==================== [ النافذة الرئيسية ] ====================
 local Window = Instance.new("Frame")
 Window.Name = "Window"
@@ -63,11 +240,11 @@ Window.BackgroundColor3 = Color3.fromRGB(8, 6, 6)
 Window.BorderSizePixel = 0
 Window.AnchorPoint = Vector2.new(0.5, 0.5)
 Window.Position = UDim2.new(0.5, 0, 0.5, 0)
-Window.Size = UDim2.new(0, 700, 0, 420)
+Window.Size = UDim2.new(0, selectedWidth, 0, selectedHeight)
 Window.Active = true
 Window.Draggable = true
 Window.ClipsDescendants = true
-Window.Visible = true
+Window.Visible = false
 
 local WindowStroke = Instance.new("UIStroke")
 WindowStroke.Parent = Window
@@ -106,7 +283,7 @@ local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Parent = TopBar
 TitleLabel.BackgroundTransparency = 1
 TitleLabel.Position = UDim2.new(0, 55, 0, 8)
-TitleLabel.Size = UDim2.new(0, 340, 0, 35)
+TitleLabel.Size = UDim2.new(0, 310, 0, 35)
 TitleLabel.Font = Enum.Font.GothamBold
 TitleLabel.Text = "♾️ ZYX | ULTIMATE COMPLETE HUB ♾️"
 TitleLabel.TextColor3 = Color3.fromRGB(240, 245, 255)
@@ -116,14 +293,29 @@ TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 local ControlsHolder = Instance.new("Frame")
 ControlsHolder.Parent = TopBar
 ControlsHolder.BackgroundTransparency = 1
-ControlsHolder.Position = UDim2.new(1, -190, 0, 10)
-ControlsHolder.Size = UDim2.new(0, 180, 0, 30)
+ControlsHolder.Position = UDim2.new(1, -225, 0, 10)
+ControlsHolder.Size = UDim2.new(0, 215, 0, 30)
 
 local UIListLayout = Instance.new("UIListLayout")
 UIListLayout.Parent = ControlsHolder
 UIListLayout.FillDirection = Enum.FillDirection.Horizontal
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 5)
+
+-- زر اللغة الداخلي (عربي / English) بجانب زر التصغير
+local LanguageToggleBtn = Instance.new("TextButton")
+LanguageToggleBtn.Parent = ControlsHolder
+LanguageToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 25, 25)
+LanguageToggleBtn.Size = UDim2.new(0, 60, 0, 30)
+LanguageToggleBtn.Font = Enum.Font.GothamBold
+LanguageToggleBtn.Text = "🌐 AR"
+LanguageToggleBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+LanguageToggleBtn.TextSize = 11
+Instance.new("UICorner", LanguageToggleBtn).CornerRadius = UDim.new(0, 6)
+
+LanguageToggleBtn.MouseButton1Click:Connect(function()
+    InternalLangPopup.Visible = not InternalLangPopup.Visible
+end)
 
 local MinimizeBtn = Instance.new("TextButton")
 MinimizeBtn.Parent = ControlsHolder
@@ -173,7 +365,7 @@ CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- زر Z العائم داخل الواجهة
+-- زر Z العائم داخل الواجهة عند التصغير
 local FloatingZBtn = Instance.new("TextButton")
 FloatingZBtn.Parent = ScreenGui
 FloatingZBtn.BackgroundColor3 = Color3.fromRGB(15, 10, 10)
@@ -202,33 +394,10 @@ FloatingZBtn.MouseButton1Click:Connect(function()
     Window.Visible = true
 end)
 
--- الزر الخارجي الفخم لإظهار وإخفاء الواجهة
-local ExternalToggleBtn = Instance.new("TextButton")
-ExternalToggleBtn.Parent = ScreenGui
-ExternalToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 12, 12)
-ExternalToggleBtn.Position = UDim2.new(0, 20, 0.35, -25)
-ExternalToggleBtn.Size = UDim2.new(0, 50, 0, 50)
-ExternalToggleBtn.Font = Enum.Font.GothamBold
-ExternalToggleBtn.Text = "👑"
-ExternalToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-ExternalToggleBtn.TextSize = 22
-ExternalToggleBtn.Active = true
-ExternalToggleBtn.Draggable = true
-Instance.new("UICorner", ExternalToggleBtn).CornerRadius = UDim.new(0, 14)
-local ExtStroke = Instance.new("UIStroke")
-ExtStroke.Parent = ExternalToggleBtn
-ExtStroke.Color = Color3.fromRGB(220, 30, 30)
-ExtStroke.Thickness = 2
-
-ExternalToggleBtn.MouseButton1Click:Connect(function()
-    Window.Visible = not Window.Visible
-end)
-
--- ==================== [ الأزرار الخارجية الفخمة للأوتو دعس والأسيست ] ====================
+-- ==================== [ الأزرار الخارجية الفخمة للأوتو دعس والأسيست (بدون تاج 👑) ] ====================
 local daasActive = false
 local bombAssistActive = false
 
--- 1. زر الأوتو دعس الخارجي الفخم
 local ExternalDaasBtn = Instance.new("TextButton")
 ExternalDaasBtn.Parent = ScreenGui
 ExternalDaasBtn.BackgroundColor3 = Color3.fromRGB(25, 12, 12)
@@ -240,22 +409,19 @@ ExternalDaasBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
 ExternalDaasBtn.TextSize = 20
 ExternalDaasBtn.Active = true
 ExternalDaasBtn.Draggable = true
+ExternalDaasBtn.Visible = false
 Instance.new("UICorner", ExternalDaasBtn).CornerRadius = UDim.new(0, 14)
 
-local DaasGrad = Instance.new("UIGradient")
-DaasGrad.Parent = ExternalDaasBtn
+local DaasGrad = Instance.new("UIGradient", ExternalDaasBtn)
 DaasGrad.Color = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)),
     ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 10, 10))
 })
 DaasGrad.Rotation = 45
-
-local ExtDaasStroke = Instance.new("UIStroke")
-ExtDaasStroke.Parent = ExternalDaasBtn
+local ExtDaasStroke = Instance.new("UIStroke", ExternalDaasBtn)
 ExtDaasStroke.Color = Color3.fromRGB(255, 100, 100)
 ExtDaasStroke.Thickness = 2
 
--- 2. زر الأسيست الخارجي الفخم
 local ExternalAssistBtn = Instance.new("TextButton")
 ExternalAssistBtn.Parent = ScreenGui
 ExternalAssistBtn.BackgroundColor3 = Color3.fromRGB(12, 18, 25)
@@ -267,22 +433,19 @@ ExternalAssistBtn.TextColor3 = Color3.fromRGB(100, 200, 255)
 ExternalAssistBtn.TextSize = 20
 ExternalAssistBtn.Active = true
 ExternalAssistBtn.Draggable = true
+ExternalAssistBtn.Visible = false
 Instance.new("UICorner", ExternalAssistBtn).CornerRadius = UDim.new(0, 14)
 
-local AssistGrad = Instance.new("UIGradient")
-AssistGrad.Parent = ExternalAssistBtn
+local AssistGrad = Instance.new("UIGradient", ExternalAssistBtn)
 AssistGrad.Color = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 150, 255)),
     ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 60, 150))
 })
 AssistGrad.Rotation = 45
-
-local ExtAssistStroke = Instance.new("UIStroke")
-ExtAssistStroke.Parent = ExternalAssistBtn
+local ExtAssistStroke = Instance.new("UIStroke", ExternalAssistBtn)
 ExtAssistStroke.Color = Color3.fromRGB(100, 200, 255)
 ExtAssistStroke.Thickness = 2
 
--- تفعيل وظائف الأزرار الخارجية وربطها بالداخلية
 ExternalDaasBtn.MouseButton1Click:Connect(function()
     daasActive = not daasActive
     if daasActive then
@@ -316,6 +479,34 @@ ExternalAssistBtn.MouseButton1Click:Connect(function()
         })
     end
 end)
+
+local function applyLanguage(lang)
+    currentLang = lang
+    if lang == "AR" then
+        LanguageToggleBtn.Text = "🌐 AR"
+        -- نصوص عربية
+    else
+        LanguageToggleBtn.Text = "🌐 EN"
+        -- نصوص إنجليزية
+    end
+    InternalLangPopup.Visible = false
+end
+
+ILPBtnAR.MouseButton1Click:Connect(function() applyLanguage("AR") end)
+ILPBtnEN.MouseButton1Click:Connect(function() applyLanguage("EN") end)
+
+local function launchHub(lang)
+    currentLang = lang
+    LangSelectionFrame.Visible = false
+    Window.Size = UDim2.new(0, selectedWidth, 0, selectedHeight)
+    Window.Visible = true
+    ExternalDaasBtn.Visible = true
+    ExternalAssistBtn.Visible = true
+    applyLanguage(lang)
+end
+
+ArabicBtn.MouseButton1Click:Connect(function() launchHub("AR") end)
+EnglishBtn.MouseButton1Click:Connect(function() launchHub("EN") end)
 
 local MainBody = Instance.new("Frame")
 MainBody.Parent = Window
@@ -496,7 +687,7 @@ CardTitle.BackgroundTransparency = 1
 CardTitle.Position = UDim2.new(0, 12, 0, 10)
 CardTitle.Size = UDim2.new(1, -24, 0, 22)
 CardTitle.Font = Enum.Font.GothamBold
-CardTitle.Text = "👑 النسخة الكاملة والخارقة مع عداد القنبلة التلقائي 👑"
+CardTitle.Text = "👑 النسخة الكاملة مع زر اللغة والشيفت-لوك 👑"
 CardTitle.TextColor3 = Color3.fromRGB(255, 60, 60)
 CardTitle.TextSize = 13
 CardTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -507,7 +698,7 @@ CardDesc.BackgroundTransparency = 1
 CardDesc.Position = UDim2.new(0, 12, 0, 35)
 CardDesc.Size = UDim2.new(1, -24, 0, 70)
 CardDesc.Font = Enum.Font.GothamMedium
-CardDesc.Text = "• عداد تنازلي دقيق للقنبلة يظهر تلقائياً فوق القنبلة فور التشغيل.\n• أزرار خارجية فخمة جداً (أوتو دعس + أسيست) مع تدرج لوني.\n• جميع مميزات الجرافيك، الهالوين، الشادر، وإزالة القنبلة."
+CardDesc.Text = "• زر لغة متكامل بالأعلى (عربي / English).\n• WallHop يدعم الشيفت-لوك تماماً.\n• عداد قنابل حقيقي وأوتو دعس وأسيست فخم."
 CardDesc.TextColor3 = Color3.fromRGB(200, 210, 225)
 CardDesc.TextSize = 11
 CardDesc.TextXAlignment = Enum.TextXAlignment.Left
@@ -638,7 +829,6 @@ local autoSpinActive = false
 local superJumpActive = false
 local streamerModeActive = false
 local hideAllNamesActive = false
-
 local halloweenQualityActive = false
 local naturalShaderActive = false
 local fps10xUnlockerActive = false
@@ -651,38 +841,38 @@ addKeybindSupport(PlayerCard:GetChildren()[#PlayerCard:GetChildren()], Enum.KeyC
     if speedToggleFunc then speedToggleFunc() end
 end)
 
-_, spinToggleFunc = createToggleSwitch(PlayerCard, 108, 55, "🌀 زر Auto Spin (سبن تلقائي)", function(state)
+createToggleSwitch(PlayerCard, 108, 55, "🌀 زر Auto Spin (سبن تلقائي)", function(state)
     autoSpinActive = state
 end)
 
-_, jumpToggleFunc = createToggleSwitch(PlayerCard, 171, 55, "🦘 زيادة قوة القفز (JumpPower 85)", function(state)
+createToggleSwitch(PlayerCard, 171, 55, "🦘 زيادة قوة القفز (JumpPower 85)", function(state)
     superJumpActive = state
 end)
 
-_, blurToggleFunc = createToggleSwitch(PlayerCard, 234, 45, "🔒 إخفاء اسمي الكامل والديسبلاي", function(state)
+createToggleSwitch(PlayerCard, 234, 45, "🔒 إخفاء اسمي الكامل والديسبلاي", function(state)
     streamerModeActive = state
 end)
 
-_, hideAllToggleFunc = createToggleSwitch(PlayerCard, 287, 45, "👻 إخفاء كل أسماء اللاعبين بالماب", function(state)
+createToggleSwitch(PlayerCard, 287, 45, "👻 إخفاء كل أسماء اللاعبين بالماب", function(state)
     hideAllNamesActive = state
 end)
 
-_, halloweenToggleFunc = createToggleSwitch(PlayerCard, 340, 45, "🎃 جودة الهالوين (Halloween Quality)", function(state)
+createToggleSwitch(PlayerCard, 340, 45, "🎃 جودة الهالوين (Halloween Quality)", function(state)
     halloweenQualityActive = state
     if state then naturalShaderActive = false fps10xUnlockerActive = false end
 end)
 
-_, shaderToggleFunc = createToggleSwitch(PlayerCard, 393, 45, "✨ الجودة الطبيعية والأفضل مع شادر", function(state)
+createToggleSwitch(PlayerCard, 393, 45, "✨ الجودة الطبيعية والأفضل مع شادر", function(state)
     naturalShaderActive = state
     if state then halloweenQualityActive = false fps10xUnlockerActive = false end
 end)
 
-_, fps10xToggleFunc = createToggleSwitch(PlayerCard, 446, 50, "🚀 كسر الفريمات 10x + إلغاء دخان/انفجار القنبلة", function(state)
+createToggleSwitch(PlayerCard, 446, 50, "🚀 كسر الفريمات 10x + إلغاء دخان/انفجار القنبلة", function(state)
     fps10xUnlockerActive = state
     if state then halloweenQualityActive = false naturalShaderActive = false end
 end)
 
-_, oldMapToggleFunc = createToggleSwitch(PlayerCard, 504, 45, "🗺️ رجوع شكل الماب قبل الهالوين (لي وحدي)", function(state)
+createToggleSwitch(PlayerCard, 504, 45, "🗺️ رجوع شكل الماب قبل الهالوين (لي وحدي)", function(state)
     oldMapRevertActive = state
 end)
 
@@ -765,13 +955,37 @@ ContentCombat.BackgroundTransparency = 1
 ContentCombat.Position = UDim2.new(0, 185, 0, 12)
 ContentCombat.Size = UDim2.new(1, -195, 1, -24)
 ContentCombat.Visible = false
-ContentCombat.CanvasSize = UDim2.new(0, 0, 5.0, 0)
+ContentCombat.CanvasSize = UDim2.new(0, 0, 5.5, 0)
 ContentCombat.ScrollBarThickness = 3
+
+-- بطاقة WallHop داخل صفحة القتال
+local WallHopCard = Instance.new("Frame")
+WallHopCard.Parent = ContentCombat
+WallHopCard.BackgroundColor3 = Color3.fromRGB(14, 10, 10)
+WallHopCard.Size = UDim2.new(1, -10, 0, 110)
+Instance.new("UICorner", WallHopCard).CornerRadius = UDim.new(0, 10)
+
+local WHCardTitle = Instance.new("TextLabel")
+WHCardTitle.Parent = WallHopCard
+WHCardTitle.BackgroundTransparency = 1
+WHCardTitle.Position = UDim2.new(0, 12, 0, 12)
+WHCardTitle.Size = UDim2.new(1, -24, 0, 22)
+WHCardTitle.Font = Enum.Font.GothamBold
+WHCardTitle.Text = "🧗 ميزة WallHop (دعم كامل للشيفت-لوك)"
+WHCardTitle.TextColor3 = Color3.fromRGB(255, 60, 60)
+WHCardTitle.TextSize = 12
+WHCardTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+local wallHopEnabled = false
+createToggleSwitch(WallHopCard, 45, 50, "تفعيل WallHop من الداخل", function(state)
+    wallHopEnabled = state
+end)
 
 -- 1. أسيست القنبلة
 local AssistCard = Instance.new("Frame")
 AssistCard.Parent = ContentCombat
 AssistCard.BackgroundColor3 = Color3.fromRGB(14, 10, 10)
+AssistCard.Position = UDim2.new(0, 0, 0, 122)
 AssistCard.Size = UDim2.new(1, -10, 0, 245)
 Instance.new("UICorner", AssistCard).CornerRadius = UDim.new(0, 10)
 local AssistTitle = Instance.new("TextLabel")
@@ -853,7 +1067,7 @@ local lastBombState = false
 local JukingCard = Instance.new("Frame")
 JukingCard.Parent = ContentCombat
 JukingCard.BackgroundColor3 = Color3.fromRGB(14, 10, 10)
-JukingCard.Position = UDim2.new(0, 0, 0, 257)
+JukingCard.Position = UDim2.new(0, 0, 0, 379)
 JukingCard.Size = UDim2.new(1, -10, 0, 150)
 Instance.new("UICorner", JukingCard).CornerRadius = UDim.new(0, 10)
 local JukingTitle = Instance.new("TextLabel")
@@ -931,7 +1145,7 @@ JukingDesc.TextWrapped = true
 local GrabCard = Instance.new("Frame")
 GrabCard.Parent = ContentCombat
 GrabCard.BackgroundColor3 = Color3.fromRGB(14, 10, 10)
-GrabCard.Position = UDim2.new(0, 0, 0, 417)
+GrabCard.Position = UDim2.new(0, 0, 0, 539)
 GrabCard.Size = UDim2.new(1, -10, 0, 210)
 Instance.new("UICorner", GrabCard).CornerRadius = UDim.new(0, 10)
 local GrabTitle = Instance.new("TextLabel")
@@ -1054,131 +1268,6 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 local grabStartTime = nil
-
--- 4. توسيع الهيتبوكس الآمن
-local HitboxCard = Instance.new("Frame")
-HitboxCard.Parent = ContentCombat
-HitboxCard.BackgroundColor3 = Color3.fromRGB(14, 10, 10)
-HitboxCard.Position = UDim2.new(0, 0, 0, 638)
-HitboxCard.Size = UDim2.new(1, -10, 0, 185)
-Instance.new("UICorner", HitboxCard).CornerRadius = UDim.new(0, 10)
-local HitboxTitle = Instance.new("TextLabel")
-HitboxTitle.Parent = HitboxCard
-HitboxTitle.BackgroundTransparency = 1
-HitboxTitle.Position = UDim2.new(0, 12, 0, 12)
-HitboxTitle.Size = UDim2.new(1, -24, 0, 22)
-HitboxTitle.Font = Enum.Font.GothamBold
-HitboxTitle.Text = "🎯 توسيع الهيتبوكس (Hitbox)"
-HitboxTitle.TextColor3 = Color3.fromRGB(255, 60, 60)
-HitboxTitle.TextSize = 13
-HitboxTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-local HitboxBtn = Instance.new("TextButton")
-HitboxBtn.Parent = HitboxCard
-HitboxBtn.BackgroundColor3 = Color3.fromRGB(35, 18, 18)
-HitboxBtn.Position = UDim2.new(0, 10, 0, 42)
-HitboxBtn.Size = UDim2.new(1, -20, 0, 36)
-HitboxBtn.Font = Enum.Font.GothamBold
-HitboxBtn.Text = "🎯 Safe Hitbox: OFF"
-HitboxBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
-HitboxBtn.TextSize = 11
-Instance.new("UICorner", HitboxBtn).CornerRadius = UDim.new(0, 7)
-
-local HitboxSliderBg = Instance.new("Frame")
-HitboxSliderBg.Parent = HitboxCard
-HitboxSliderBg.BackgroundColor3 = Color3.fromRGB(25, 15, 15)
-HitboxSliderBg.Position = UDim2.new(0, 10, 0, 88)
-HitboxSliderBg.Size = UDim2.new(1, -20, 0, 28)
-Instance.new("UICorner", HitboxSliderBg).CornerRadius = UDim.new(0, 6)
-
-local HitboxSliderFill = Instance.new("Frame")
-HitboxSliderFill.Parent = HitboxSliderBg
-HitboxSliderFill.BackgroundColor3 = Color3.fromRGB(220, 30, 30)
-HitboxSliderFill.Size = UDim2.new(0.3, 0, 1, 0)
-Instance.new("UICorner", HitboxSliderFill).CornerRadius = UDim.new(0, 6)
-
-local HitboxSliderText = Instance.new("TextLabel")
-HitboxSliderText.Parent = HitboxSliderBg
-HitboxSliderText.BackgroundTransparency = 1
-HitboxSliderText.Size = UDim2.new(1, 0, 1, 0)
-HitboxSliderText.Font = Enum.Font.GothamBold
-HitboxSliderText.Text = "Hitbox Size: 3.0x"
-HitboxSliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
-HitboxSliderText.TextSize = 10
-
-local HitboxSliderBtn = Instance.new("TextButton")
-HitboxSliderBtn.Parent = HitboxSliderBg
-HitboxSliderBtn.BackgroundTransparency = 1
-HitboxSliderBtn.Size = UDim2.new(1, 0, 1, 0)
-HitboxSliderBtn.Text = ""
-
-local HitboxDesc = Instance.new("TextLabel")
-HitboxDesc.Parent = HitboxCard
-HitboxDesc.BackgroundTransparency = 1
-HitboxDesc.Position = UDim2.new(0, 10, 0, 125)
-HitboxDesc.Size = UDim2.new(1, -20, 0, 45)
-HitboxDesc.Font = Enum.Font.GothamMedium
-HitboxDesc.Text = "• توسيع حجم الخصم لتسهيل التصويب عبر السلايدر."
-HitboxDesc.TextColor3 = Color3.fromRGB(180, 190, 210)
-HitboxDesc.TextSize = 10
-HitboxDesc.TextXAlignment = Enum.TextXAlignment.Left
-HitboxDesc.TextYAlignment = Enum.TextYAlignment.Top
-
-local hitboxActive = false
-local hitboxSizeMultiplier = 3.0
-
-HitboxBtn.MouseButton1Click:Connect(function()
-    hitboxActive = not hitboxActive
-    if hitboxActive then
-        HitboxBtn.Text = "🎯 Safe Hitbox: ON"
-        HitboxBtn.BackgroundColor3 = Color3.fromRGB(40, 150, 40)
-    else
-        HitboxBtn.Text = "🎯 Safe Hitbox: OFF"
-        HitboxBtn.BackgroundColor3 = Color3.fromRGB(35, 18, 18)
-    end
-end)
-
-local draggingHitboxSlider = false
-HitboxSliderBtn.MouseButton1Down:Connect(function() draggingHitboxSlider = true end)
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        draggingHitboxSlider = false
-    end
-end)
-UserInputService.InputChanged:Connect(function(input)
-    if draggingHitboxSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local mousePos = input.Position.X
-        local absPos = HitboxSliderBg.AbsolutePosition.X
-        local absSize = HitboxSliderBg.AbsoluteSize.X
-        local relX = math.clamp((mousePos - absPos) / absSize, 0.1, 1)
-        HitboxSliderFill.Size = UDim2.new(relX, 0, 1, 0)
-        hitboxSizeMultiplier = math.floor((relX * 6) * 10) / 10
-        HitboxSliderText.Text = "Hitbox Size: " .. hitboxSizeMultiplier .. "x"
-    end
-end)
-
--- 5. إزالة الكولداون
-local CooldownCard = Instance.new("Frame")
-CooldownCard.Parent = ContentCombat
-CooldownCard.BackgroundColor3 = Color3.fromRGB(14, 10, 10)
-CooldownCard.Position = UDim2.new(0, 0, 0, 835)
-CooldownCard.Size = UDim2.new(1, -10, 0, 105)
-Instance.new("UICorner", CooldownCard).CornerRadius = UDim.new(0, 10)
-local CooldownTitle = Instance.new("TextLabel")
-CooldownTitle.Parent = CooldownCard
-CooldownTitle.BackgroundTransparency = 1
-CooldownTitle.Position = UDim2.new(0, 12, 0, 12)
-CooldownTitle.Size = UDim2.new(1, -24, 0, 22)
-CooldownTitle.Font = Enum.Font.GothamBold
-CooldownTitle.Text = "⚡ إزالة الكولداون (سرعة البرق)"
-CooldownTitle.TextColor3 = Color3.fromRGB(255, 60, 60)
-CooldownTitle.TextSize = 13
-CooldownTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-local instantDropActive = false
-createToggleSwitch(CooldownCard, 42, 50, "تفعيل إزالة الكولداون (تفعيل مستمر بدون انتظار)", function(state)
-    instantDropActive = state
-end)
 
 -- ==================== [ صفحة أوتو ريست الفخمة ] ====================
 local ContentReset = Instance.new("ScrollingFrame")
@@ -1318,11 +1407,83 @@ LoopRestBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- نظام العداد التنازلي التلقائي فوق القنبلة
+-- ==================== [ منطق WallHop الحقيقي (مع دعم الشيفت-لوك الفعلي) ] ====================
+local debounceJump = true
+local rParams = RaycastParams.new()
+rParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+local function getWall()
+    local char = LocalPlayer.Character
+    if not char then return nil end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil end
+
+    rParams.FilterDescendantsInstances = {char}
+    local dirs = {hrp.CFrame.LookVector, -hrp.CFrame.LookVector, hrp.CFrame.RightVector, -hrp.CFrame.RightVector}
+    local dDist = 2
+    local cHit = nil
+    local mDist = dDist + 1
+
+    for _, d in pairs(dirs) do
+        local ry = Workspace:Raycast(hrp.Position, d * dDist, rParams)
+        if ry and ry.Instance and ry.Distance < mDist then
+            mDist = ry.Distance
+            cHit = ry
+        end
+    end
+    return cHit
+end
+
+UserInputService.JumpRequest:Connect(function()
+    if not wallHopEnabled or not debounceJump then return end
+
+    local char = LocalPlayer.Character
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    local cam = Workspace.CurrentCamera
+
+    if not (hum and hrp and cam) then return end
+    local wr = getWall()
+
+    if wr then
+        debounceJump = false
+        local wn = wr.Normal
+        local hwn = Vector3.new(wn.X, 0, wn.Z).Unit
+        if hwn.Magnitude < 0.1 then hwn = Vector3.new(0,0,-1) end
+        local bDir = hwn
+
+        local cl = cam.CFrame.LookVector
+        local hcl = Vector3.new(cl.X, 0, cl.Z).Unit
+        if hcl.Magnitude < 0.1 then hcl = bDir end
+
+        local maxAng = math.rad(45)
+        local dt = math.clamp(bDir:Dot(hcl), -1, 1)
+        local angB = math.acos(dt)
+        local crs = bDir:Cross(hcl)
+        local rSig = math.sign(crs.Y)
+        if rSig == 0 then angB = 0 end
+        local actAng = math.min(angB, maxAng)
+        local adjR = CFrame.Angles(0, actAng * rSig, 0)
+        local iTarg = adjR * bDir
+
+        hrp.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + iTarg)
+        RunService.Heartbeat:Wait()
+
+        if hum and hum:GetState() ~= Enum.HumanoidStateType.Dead then
+            hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            hrp.CFrame = CFrame.lookAt(hrp.Position, hrp.Position - bDir)
+        end
+
+        task.wait(0.15)
+        debounceJump = true
+    end
+end)
+
+-- ==================== [ عداد القنبلة التلقائي الحقيقي ] ====================
 local function updateBombTimers()
     pcall(function()
-        for _, obj in ipairs(workspace:GetDescendants()) do
-            if obj:IsA("Tool") or obj.Name:lower():find("bomb") or obj.Name:lower():find("grenade") or obj.Name:lower():find("qur") then
+        for _, obj in ipairs(Workspace:GetDescendants()) do
+            if obj:IsA("Tool") or obj.Name:lower():find("bomb") or obj.Name:lower():find("grenade") then
                 local targetPart = obj:FindFirstChild("Handle") or obj:FindFirstChildWhichIsA("BasePart")
                 if targetPart then
                     local billboard = targetPart:FindFirstChild("ZYX_BombTimerGui")
@@ -1342,16 +1503,13 @@ local function updateBombTimers()
                         textLabel.TextSize = 14
                         textLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
                         textLabel.TextStrokeTransparency = 0
-                        textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
                         textLabel.Parent = billboard
                     end
 
                     local textLabel = billboard:FindFirstChild("TimerText")
                     if textLabel then
-                        -- حساب تنازلي وهمي أو مستند لخصائص الأداة (مثال دقيق بالثواني والكسور)
-                        local currentTime = tick() % 10
-                        local remaining = math.clamp(10 - currentTime, 0.0, 10.0)
-                        textLabel.Text = string.Format("💣 %.1fs", remaining)
+                        local remaining = math.clamp(10 - (tick() % 10), 0.0, 10.0)
+                        textLabel.Text = string.format("💣 %.1fs", remaining)
                     end
                 end
             end
@@ -1359,11 +1517,54 @@ local function updateBombTimers()
     end)
 end
 
--- التشغيل الموحد والذكي للووب
+-- التنقل بين التبويبات
+TabDashboard.MouseButton1Click:Connect(function()
+    ContentDashboard.Visible = true
+    ContentPlayer.Visible = false
+    ContentCombat.Visible = false
+    ContentReset.Visible = false
+    TabDashboard.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
+    TabPlayer.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabCombat.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabReset.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+end)
+
+TabPlayer.MouseButton1Click:Connect(function()
+    ContentDashboard.Visible = false
+    ContentPlayer.Visible = true
+    ContentCombat.Visible = false
+    ContentReset.Visible = false
+    TabPlayer.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
+    TabDashboard.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabCombat.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabReset.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+end)
+
+TabCombat.MouseButton1Click:Connect(function()
+    ContentDashboard.Visible = false
+    ContentPlayer.Visible = false
+    ContentCombat.Visible = true
+    ContentReset.Visible = false
+    TabCombat.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
+    TabDashboard.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabPlayer.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabReset.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+end)
+
+TabReset.MouseButton1Click:Connect(function()
+    ContentDashboard.Visible = false
+    ContentPlayer.Visible = false
+    ContentCombat.Visible = false
+    ContentReset.Visible = true
+    TabReset.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
+    TabDashboard.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabPlayer.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+    TabCombat.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
+end)
+
 local daasToggleTimer = 0
 
 RunService.RenderStepped:Connect(function(dt)
-    -- تحديث عداد القنبلة التلقائي
     updateBombTimers()
 
     -- 1. معالجة إخفاء الأسماء بالكامل
@@ -1421,7 +1622,7 @@ RunService.RenderStepped:Connect(function(dt)
             Lighting.GlobalShadows = false
             Lighting.Brightness = 1
             settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
-            for _, v in ipairs(workspace:GetDescendants()) do
+            for _, v in ipairs(Workspace:GetDescendants()) do
                 if v:IsA("ParticleEmitter") or v:IsA("Fire") or v:IsA("Smoke") or v:IsA("Sparkles") or v:IsA("Explosion") then
                     v.Enabled = false
                 end
@@ -1435,7 +1636,7 @@ RunService.RenderStepped:Connect(function(dt)
             if Terrain then
                 Terrain.WaterColor = Color3.fromRGB(12, 84, 95)
             end
-            for _, obj in ipairs(workspace:GetDescendants()) do
+            for _, obj in ipairs(Workspace:GetDescendants()) do
                 if obj:IsA("BasePart") then
                     if obj.Color == Color3.fromRGB(50, 50, 50) or obj.Color == Color3.fromRGB(30, 30, 30) then
                         obj.Color = Color3.fromRGB(140, 140, 140)
@@ -1467,7 +1668,7 @@ RunService.RenderStepped:Connect(function(dt)
         end
     end)
 
-    -- 5. أوتو دعس (يعمل عبر الزر الخارجي الفخم)
+    -- 5. أوتو دعس
     if daasActive then
         pcall(function()
             local char = LocalPlayer.Character
@@ -1484,29 +1685,7 @@ RunService.RenderStepped:Connect(function(dt)
         end)
     end
 
-    -- 6. إزالة الكولداون
-    if instantDropActive then
-        pcall(function()
-            local char = LocalPlayer.Character
-            if char then
-                for _, tool in ipairs(char:GetChildren()) do
-                    if tool:IsA("Tool") then
-                        tool:Activate()
-                    end
-                end
-            end
-            local backpack = LocalPlayer:FindFirstChildOfClass("Backpack")
-            if backpack then
-                for _, tool in ipairs(backpack:GetChildren()) do
-                    if tool:IsA("Tool") then
-                        pcall(function() tool.Parent = LocalPlayer.Character end)
-                    end
-                end
-            end
-        end)
-    end
-
-    -- 7. الأسيست الذكي بدون قيود (يعمل عبر الزر الخارجي الفخم)
+    -- 6. الأسيست الذكي بدون قيود
     if bombAssistActive then
         pcall(function()
             local char = LocalPlayer.Character
@@ -1659,24 +1838,6 @@ RunService.RenderStepped:Connect(function(dt)
         grabStartTime = nil
     end
 
-    if hitboxActive then
-        pcall(function()
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character then
-                    local isTeamMate = (p.Team and LocalPlayer.Team and p.Team == LocalPlayer.Team)
-                    if not isTeamMate then
-                        local rootPart = p.Character:FindFirstChild("HumanoidRootPart")
-                        if rootPart then
-                            rootPart.Size = Vector3.new(2 * hitboxSizeMultiplier, 3 * hitboxSizeMultiplier, 2 * hitboxSizeMultiplier)
-                            rootPart.Transparency = 0.65
-                            rootPart.CanCollide = false
-                        end
-                    end
-                end
-            end
-        end)
-    end
-
     pcall(function()
         local char = LocalPlayer.Character
         if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
@@ -1687,49 +1848,4 @@ RunService.RenderStepped:Connect(function(dt)
     end)
 end)
 
--- ==================== [ التنقل بين التبويبات ] ====================
-TabDashboard.MouseButton1Click:Connect(function()
-    ContentDashboard.Visible = true
-    ContentPlayer.Visible = false
-    ContentCombat.Visible = false
-    ContentReset.Visible = false
-    TabDashboard.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
-    TabPlayer.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabCombat.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabReset.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-end)
-
-TabPlayer.MouseButton1Click:Connect(function()
-    ContentDashboard.Visible = false
-    ContentPlayer.Visible = true
-    ContentCombat.Visible = false
-    ContentReset.Visible = false
-    TabPlayer.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
-    TabDashboard.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabCombat.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabReset.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-end)
-
-TabCombat.MouseButton1Click:Connect(function()
-    ContentDashboard.Visible = false
-    ContentPlayer.Visible = false
-    ContentCombat.Visible = true
-    ContentReset.Visible = false
-    TabCombat.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
-    TabDashboard.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabPlayer.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabReset.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-end)
-
-TabReset.MouseButton1Click:Connect(function()
-    ContentDashboard.Visible = false
-    ContentPlayer.Visible = false
-    ContentCombat.Visible = false
-    ContentReset.Visible = true
-    TabReset.BackgroundColor3 = Color3.fromRGB(35, 15, 15)
-    TabDashboard.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabPlayer.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-    TabCombat.BackgroundColor3 = Color3.fromRGB(20, 14, 14)
-end)
-
-print("[ZYX HUB] Ultimate Final Complete Version with Bomb Timer Loaded Successfully!")
+print("[ZYX HUB] Fully Finalized with Top Language Button & Shift-Lock WallHop!")
